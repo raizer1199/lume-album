@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Convite · LUME</title>
+  <style>
+    :root {
+      --oliva: #34443D; --fundo: #F5F0E8; --superficie: #FBF8F3; --texto: #857B6E;
+      --detalhe: #A89C8C; --dourado: #B08D57; --borda: #E4DACB; --alerta: #A0522D;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--fundo); color: var(--oliva);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex; justify-content: center;
+    }
+    main { width: 100%; max-width: 460px; padding: 28px 18px 48px; }
+    .convite {
+      position: relative; text-align: center; padding: 46px 26px 34px; border-radius: 26px;
+      background: var(--superficie); border: 1px solid var(--borda);
+      box-shadow: 0 10px 30px rgba(42, 33, 25, .08);
+    }
+    .arco {
+      position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+      width: 230px; height: 260px; border: 1px solid rgba(176, 141, 87, .45);
+      border-bottom: 0; border-radius: 115px 115px 0 0; pointer-events: none;
+    }
+    .selo { color: var(--dourado); font-size: 11px; font-weight: 600; letter-spacing: 4px; margin: 34px 0 0; }
+    .intro { color: var(--texto); font-size: 14px; margin: 16px 0 0; }
+    .nomes {
+      font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: 36px;
+      line-height: 1.15; margin: 10px 0 0;
+    }
+    .para { color: var(--texto); font-size: 14px; margin: 22px 0 0; }
+    .convidado { font-size: 20px; margin: 6px 0 0; }
+    .linha { width: 46px; height: 1.5px; background: var(--dourado); margin: 26px auto; }
+    .data { font-family: Georgia, serif; font-size: 21px; margin: 0; }
+    .hora { color: var(--texto); font-size: 15px; margin: 6px 0 0; }
+    .local { font-size: 16px; margin: 20px 0 0; }
+    .endereco { color: var(--texto); font-size: 13px; margin: 4px 0 0; line-height: 1.5; }
+    .mapa { display: inline-block; margin-top: 12px; color: var(--dourado); font-weight: 600; font-size: 14px; text-decoration: none; }
+    .rsvp {
+      margin-top: 18px; padding: 22px; border-radius: 22px; text-align: center;
+      background: var(--oliva); color: #fff;
+    }
+    .rsvp h2 { font-weight: 300; font-size: 22px; margin: 0; }
+    .rsvp p { color: rgba(255,255,255,.8); font-size: 14px; margin: 6px 0 0; line-height: 1.5; }
+    .botao {
+      display: block; width: 100%; margin-top: 14px; padding: 16px; border: 0; border-radius: 14px;
+      font-size: 16px; font-weight: 600; cursor: pointer; background: var(--dourado); color: #fff;
+    }
+    .botao.claro { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.6); }
+    .contador { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 16px; }
+    .contador button {
+      width: 44px; height: 44px; border-radius: 22px; border: 1px solid rgba(255,255,255,.6);
+      background: transparent; color: #fff; font-size: 22px; cursor: pointer;
+    }
+    .contador span { font-size: 30px; font-weight: 300; min-width: 40px; }
+    .rodape { text-align: center; color: var(--detalhe); font-size: 11px; letter-spacing: 3px; margin-top: 26px; }
+    .rodape b { font-weight: 400; letter-spacing: 6px; color: var(--oliva); }
+    .escondido { display: none !important; }
+  </style>
+</head>
+<body>
+<main>
+  <p id="carregando" style="text-align:center;color:var(--texto);margin-top:60px">Abrindo o convite…</p>
+
+  <section id="erro" class="escondido" style="text-align:center;margin-top:60px">
+    <h1 style="font-weight:300">Convite não encontrado</h1>
+    <p style="color:var(--texto)">Confira se o link está completo ou peça um novo aos anfitriões.</p>
+  </section>
+
+  <section id="pagina" class="escondido">
+    <div class="convite">
+      <div class="arco"></div>
+      <p class="selo" id="selo">CASAMENTO</p>
+      <p class="intro" id="intro">Com muita alegria,</p>
+      <h1 class="nomes" id="nomes"></h1>
+      <p class="para" id="textoConvite">convidam para celebrar este momento</p>
+      <p class="convidado" id="convidado"></p>
+
+      <div class="linha"></div>
+
+      <p class="data" id="data"></p>
+      <p class="hora" id="hora"></p>
+      <p class="local" id="local"></p>
+      <p class="endereco" id="endereco"></p>
+      <a class="mapa escondido" id="mapa" target="_blank" rel="noopener">Como chegar →</a>
+    </div>
+
+    <!-- Confirmação de presença -->
+    <div class="rsvp" id="rsvp">
+      <div id="pergunta">
+        <h2 id="perguntaTitulo">Você vai?</h2>
+        <p>Sua resposta ajuda na organização da festa.</p>
+        <div id="quantos" class="escondido">
+          <p style="margin-top:14px">Quantas pessoas vão?</p>
+          <div class="contador">
+            <button id="menos" aria-label="Diminuir">−</button>
+            <span id="qtd">1</span>
+            <button id="mais" aria-label="Aumentar">+</button>
+          </div>
+        </div>
+        <button class="botao" id="sim">Sim, vamos! 🎉</button>
+        <button class="botao claro" id="nao">Não poderemos ir</button>
+      </div>
+
+      <div id="resposta" class="escondido">
+        <h2 id="respostaTitulo"></h2>
+        <p id="respostaTexto"></p>
+        <button class="botao claro" id="mudar">Mudar resposta</button>
+      </div>
+    </div>
+
+    <p class="rodape">CONVITE FEITO COM <b>LUME</b></p>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Chave PÚBLICA do Supabase (a segurança é feita pelas regras do banco)
+  const sb = window.supabase.createClient(
+    'https://adxqjkhseztdkdatrokk.supabase.co',
+    'sb_publishable_cOYCPcaup5RV71aCKHhSUw_-ZSgfOfs',
+    { auth: { persistSession: false } },
+  );
+  const $ = (id) => document.getElementById(id);
+  const mostrar = (id) => $(id).classList.remove('escondido');
+  const esconder = (id) => $(id).classList.add('escondido');
+  const token = new URLSearchParams(location.search).get('c') || '';
+  const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const dias = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+  let dados = null, qtd = 1;
+
+  function dataPorExtenso(iso) {
+    if (!iso) return 'Data a confirmar';
+    const [a, m, d] = iso.split('-').map(Number);
+    const dt = new Date(a, m - 1, d);
+    return `${dias[dt.getDay()]}, ${d} de ${meses[m - 1]} de ${a}`;
+  }
+
+  function mostrarResposta() {
+    esconder('pergunta'); mostrar('resposta');
+    const vai = dados.status === 'confirmado';
+    $('respostaTitulo').textContent = vai ? 'Presença confirmada 💛' : 'Resposta registrada';
+    $('respostaTexto').textContent = vai
+      ? `${dados.confirmados} ${dados.confirmados === 1 ? 'pessoa' : 'pessoas'}. Até lá!`
+      : 'Que pena! Obrigado por avisar.';
+  }
+
+  async function responder(vai) {
+    $('sim').disabled = $('nao').disabled = true;
+    const { data, error } = await sb.rpc('responder_convite', {
+      p_token: token, p_vai: vai, p_quantos: vai ? qtd : 0,
+    });
+    $('sim').disabled = $('nao').disabled = false;
+    if (error || !data) { alert('Não foi possível enviar. Verifique sua internet e tente de novo.'); return; }
+    dados.status = vai ? 'confirmado' : 'nao_vai';
+    dados.confirmados = vai ? qtd : 0;
+    mostrarResposta();
+  }
+
+  async function iniciar() {
+    if (!/^[a-f0-9]{32}$/.test(token)) { esconder('carregando'); return mostrar('erro'); }
+    const { data, error } = await sb.rpc('convite_publico', { p_token: token });
+    esconder('carregando');
+    if (error || !data || !data.length) return mostrar('erro');
+    dados = data[0];
+    const casamento = dados.tipo === 'casamento';
+
+    $('selo').textContent = casamento ? 'CASAMENTO' : '15 ANOS';
+    $('intro').textContent = casamento ? 'Com muita alegria,' : 'Com muito carinho,';
+    $('nomes').textContent = dados.evento;
+    $('textoConvite').textContent = casamento
+      ? 'convidam para a celebração do seu casamento'
+      : 'convida para a celebração dos seus 15 anos';
+    $('convidado').textContent = dados.convidado;
+    $('data').textContent = dataPorExtenso(dados.data_evento);
+    $('hora').textContent = dados.horario ? `às ${dados.horario}` : '';
+    $('local').textContent = dados.local_nome || dados.cidade || '';
+    $('endereco').textContent = [dados.local_endereco, dados.local_nome ? dados.cidade : null].filter(Boolean).join(' · ');
+    if (dados.local_nome || dados.local_endereco) {
+      const busca = [dados.local_nome, dados.local_endereco, dados.cidade].filter(Boolean).join(', ');
+      $('mapa').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(busca)}`;
+      mostrar('mapa');
+    }
+    document.title = `Convite · ${dados.evento}`;
+
+    qtd = dados.confirmados || dados.pessoas;
+    $('qtd').textContent = qtd;
+    if (dados.pessoas > 1) {
+      $('perguntaTitulo').textContent = 'Vocês vão?';
+      mostrar('quantos');
+    } else {
+      $('sim').textContent = 'Sim, vou! 🎉';
+      $('nao').textContent = 'Não poderei ir';
+    }
+
+    mostrar('pagina');
+    if (dados.status !== 'pendente') mostrarResposta();
+  }
+
+  $('menos').onclick = () => { qtd = Math.max(1, qtd - 1); $('qtd').textContent = qtd; };
+  $('mais').onclick = () => { qtd = Math.min(dados.pessoas, qtd + 1); $('qtd').textContent = qtd; };
+  $('sim').onclick = () => responder(true);
+  $('nao').onclick = () => responder(false);
+  $('mudar').onclick = () => { esconder('resposta'); mostrar('pergunta'); };
+
+  iniciar();
+</script>
+</body>
+</html>
