@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>LUME · Álbum do evento</title>
+  <style>
+    :root {
+      --oliva: #34443D; --fundo: #F5F0E8; --superficie: #FBF8F3; --texto: #857B6E;
+      --detalhe: #A89C8C; --dourado: #B08D57; --borda: #E4DACB; --alerta: #A0522D;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--fundo); color: var(--oliva);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex; justify-content: center;
+    }
+    main { width: 100%; max-width: 460px; padding: 40px 24px 48px; text-align: center; }
+    .arco {
+      width: 220px; height: 110px; margin: 0 auto; display: flex; align-items: flex-end;
+      justify-content: center; padding-bottom: 6px;
+      border: 1px solid rgba(176, 141, 87, .5); border-bottom: 0;
+      border-radius: 110px 110px 0 0;
+    }
+    .marca { font-size: 30px; font-weight: 300; letter-spacing: 10px; margin-right: -10px; }
+    .traco { width: 44px; height: 1.5px; background: var(--dourado); margin: 10px auto 0; }
+    .selo { color: var(--dourado); font-size: 11px; font-weight: 600; letter-spacing: 3px; margin-top: 30px; }
+    h1 { font-size: 30px; font-weight: 300; margin: 8px 0 6px; }
+    .sub { color: var(--texto); font-size: 15px; line-height: 1.5; margin: 0; }
+    .botao {
+      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+      margin-top: 28px; padding: 18px; border: 0; border-radius: 14px; cursor: pointer;
+      background: var(--oliva); color: #fff; font-size: 16px; font-weight: 600;
+    }
+    .botao:disabled { opacity: .45; }
+    .botao.claro { background: transparent; color: var(--oliva); border: 1px solid var(--oliva); margin-top: 14px; }
+    input[type=file] { display: none; }
+    .cartao {
+      margin-top: 22px; padding: 18px; border-radius: 18px; background: var(--superficie);
+      border: 1px solid var(--borda);
+    }
+    .barra { height: 6px; border-radius: 3px; background: var(--borda); overflow: hidden; margin-top: 12px; }
+    .barra > div { height: 100%; width: 0; background: var(--dourado); transition: width .3s; }
+    .ok { font-size: 18px; }
+    .erro { color: var(--alerta); font-size: 14px; margin-top: 16px; }
+    .privacidade { color: var(--detalhe); font-size: 12px; line-height: 1.6; margin-top: 30px; }
+    .escondido { display: none; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="arco"><span class="marca">LUME</span></div>
+  <div class="traco"></div>
+
+  <section id="carregando"><p class="sub" style="margin-top:40px">Carregando…</p></section>
+
+  <section id="indisponivel" class="escondido">
+    <p class="selo">ÁLBUM DO EVENTO</p>
+    <h1>Álbum indisponível</h1>
+    <p class="sub" id="indisponivelTexto">Este link não existe ou não está recebendo fotos no momento.</p>
+  </section>
+
+  <section id="album" class="escondido">
+    <p class="selo" id="tipo">ÁLBUM DO EVENTO</p>
+    <h1 id="nome"></h1>
+    <p class="sub" id="convite">Compartilhe as fotos que você tirou e ajude a eternizar este momento.</p>
+
+    <label for="arquivos" class="botao" id="escolher">📷&nbsp; Escolher fotos</label>
+    <input type="file" id="arquivos" accept="image/*" multiple />
+
+    <div id="progresso" class="cartao escondido">
+      <div id="progressoTexto">Enviando…</div>
+      <div class="barra"><div id="barra"></div></div>
+    </div>
+
+    <div id="sucesso" class="cartao escondido">
+      <div class="ok" id="sucessoTexto">Obrigado! 💛</div>
+      <label for="arquivos" class="botao claro">Enviar mais fotos</label>
+    </div>
+
+    <p class="erro escondido" id="erro"></p>
+
+    <p class="privacidade">
+      As fotos vão direto para o álbum privado do evento: só os organizadores podem ver.
+      Não é preciso instalar nada nem criar conta.
+    </p>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Chave PÚBLICA do Supabase (pode aparecer aqui; a segurança é feita pelas regras do banco)
+  const SUPABASE_URL = 'https://adxqjkhseztdkdatrokk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_cOYCPcaup5RV71aCKHhSUw_-ZSgfOfs';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { persistSession: false },
+  });
+
+  const $ = (id) => document.getElementById(id);
+  const mostrar = (id) => $(id).classList.remove('escondido');
+  const esconder = (id) => $(id).classList.add('escondido');
+  const token = new URLSearchParams(location.search).get('a') || '';
+
+  // Reduz a foto (máx. 1800 px, JPEG) para enviar rápido e economizar espaço
+  async function comprimir(arquivo) {
+    try {
+      const img = await createImageBitmap(arquivo);
+      const escala = Math.min(1, 1800 / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * escala);
+      canvas.height = Math.round(img.height * escala);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      return await new Promise((ok) => canvas.toBlob(ok, 'image/jpeg', 0.82));
+    } catch {
+      return arquivo; // se o navegador não conseguir reduzir, envia o original
+    }
+  }
+
+  async function iniciar() {
+    if (!/^[a-f0-9]{32}$/.test(token)) return indisponivel();
+    const { data, error } = await sb.rpc('album_publico', { p_token: token });
+    esconder('carregando');
+    if (error || !data || !data.length) return indisponivel();
+    const evento = data[0];
+    if (!evento.ativo) {
+      $('indisponivelTexto').textContent = 'Os organizadores pausaram o recebimento de fotos.';
+      return indisponivel();
+    }
+    $('tipo').textContent = evento.tipo === 'casamento' ? 'CASAMENTO' : '15 ANOS';
+    $('nome').textContent = evento.nome;
+    $('convite').textContent =
+      evento.tipo === 'casamento'
+        ? `Compartilhe as fotos que você tirou no casamento de ${evento.nome} e ajude a eternizar este dia.`
+        : `Compartilhe as fotos que você tirou nos 15 anos de ${evento.nome} e ajude a eternizar esta noite.`;
+    document.title = `${evento.nome} · Álbum LUME`;
+    mostrar('album');
+  }
+
+  function indisponivel() {
+    esconder('carregando');
+    mostrar('indisponivel');
+  }
+
+  $('arquivos').addEventListener('change', async (e) => {
+    const arquivos = Array.from(e.target.files || []).slice(0, 50);
+    e.target.value = '';
+    if (!arquivos.length) return;
+
+    esconder('sucesso'); esconder('erro'); esconder('escolher'); mostrar('progresso');
+    let enviadas = 0, falhas = 0;
+
+    for (const arquivo of arquivos) {
+      $('progressoTexto').textContent = `Enviando ${enviadas + falhas + 1} de ${arquivos.length}…`;
+      const foto = await comprimir(arquivo);
+      const nome = `${token}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.jpg`;
+      const { error } = await sb.storage.from('album').upload(nome, foto, {
+        contentType: 'image/jpeg', upsert: false,
+      });
+      if (error) falhas++; else enviadas++;
+      $('barra').style.width = `${((enviadas + falhas) / arquivos.length) * 100}%`;
+    }
+
+    esconder('progresso'); mostrar('escolher');
+    $('barra').style.width = '0';
+    if (enviadas) {
+      $('sucessoTexto').textContent =
+        `Obrigado! ${enviadas} ${enviadas === 1 ? 'foto enviada' : 'fotos enviadas'} 💛`;
+      mostrar('sucesso');
+    }
+    if (falhas) {
+      $('erro').textContent = `${falhas} ${falhas === 1 ? 'foto não foi enviada' : 'fotos não foram enviadas'}. Verifique sua internet e tente de novo.`;
+      mostrar('erro');
+    }
+  });
+
+  iniciar();
+</script>
+</body>
+</html>
