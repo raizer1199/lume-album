@@ -93,8 +93,8 @@
     <!-- Confirmação de presença -->
     <div class="rsvp" id="rsvp">
       <div id="pergunta">
-        <h2 id="perguntaTitulo">Você vai?</h2>
-        <p>Sua resposta ajuda na organização da festa.</p>
+        <h2 id="perguntaTitulo">Você vem?</h2>
+        <p>Confirme sua presença para ajudar na organização da festa.</p>
         <div id="quantos" class="escondido">
           <p style="margin-top:14px">Quantas pessoas vão?</p>
           <div class="contador">
@@ -103,14 +103,13 @@
             <button id="mais" aria-label="Aumentar">+</button>
           </div>
         </div>
-        <button class="botao" id="sim">Sim, vamos! 🎉</button>
-        <button class="botao claro" id="nao">Não poderemos ir</button>
+        <button class="botao" id="sim">Confirmar presença 🎉</button>
       </div>
 
       <div id="resposta" class="escondido">
         <h2 id="respostaTitulo"></h2>
         <p id="respostaTexto"></p>
-        <button class="botao claro" id="mudar">Mudar resposta</button>
+        <button class="botao claro" id="mudar">Alterar quantidade</button>
       </div>
     </div>
 
@@ -143,19 +142,17 @@
 
   function mostrarResposta() {
     esconder('pergunta'); mostrar('resposta');
-    const vai = dados.status === 'confirmado';
-    $('respostaTitulo').textContent = vai ? 'Presença confirmada 💛' : 'Resposta registrada';
-    $('respostaTexto').textContent = vai
-      ? `${dados.confirmados} ${dados.confirmados === 1 ? 'pessoa' : 'pessoas'}. Até lá!`
-      : 'Que pena! Obrigado por avisar.';
+    $('respostaTitulo').textContent = 'Presença confirmada 💛';
+    $('respostaTexto').textContent =
+      `${dados.confirmados} ${dados.confirmados === 1 ? 'pessoa' : 'pessoas'}. Até lá!`;
   }
 
   async function responder(vai) {
-    $('sim').disabled = $('nao').disabled = true;
+    $('sim').disabled = true;
     const { data, error } = await sb.rpc('responder_convite', {
       p_token: token, p_vai: vai, p_quantos: vai ? qtd : 0,
     });
-    $('sim').disabled = $('nao').disabled = false;
+    $('sim').disabled = false;
     if (error || !data) { alert('Não foi possível enviar. Verifique sua internet e tente de novo.'); return; }
     dados.status = vai ? 'confirmado' : 'nao_vai';
     dados.confirmados = vai ? qtd : 0;
@@ -191,21 +188,17 @@
     qtd = dados.confirmados || dados.pessoas;
     $('qtd').textContent = qtd;
     if (dados.pessoas > 1) {
-      $('perguntaTitulo').textContent = 'Vocês vão?';
+      $('perguntaTitulo').textContent = 'Vocês vêm?';
       mostrar('quantos');
-    } else {
-      $('sim').textContent = 'Sim, vou! 🎉';
-      $('nao').textContent = 'Não poderei ir';
     }
 
     mostrar('pagina');
-    if (dados.status !== 'pendente') mostrarResposta();
+    if (dados.status === 'confirmado') mostrarResposta();
   }
 
   $('menos').onclick = () => { qtd = Math.max(1, qtd - 1); $('qtd').textContent = qtd; };
   $('mais').onclick = () => { qtd = Math.min(dados.pessoas, qtd + 1); $('qtd').textContent = qtd; };
   $('sim').onclick = () => responder(true);
-  $('nao').onclick = () => responder(false);
   $('mudar').onclick = () => { esconder('resposta'); mostrar('pergunta'); };
 
   iniciar();
