@@ -45,7 +45,15 @@
     .ok { font-size: 18px; }
     .erro { color: var(--alerta); font-size: 14px; margin-top: 16px; }
     .privacidade { color: var(--detalhe); font-size: 12px; line-height: 1.6; margin-top: 30px; }
-    .escondido { display: none; }
+    .escondido { display: none !important; }
+    .rotulo { display: block; font-size: 17px; margin-bottom: 12px; }
+    .campo {
+      width: 100%; padding: 15px 16px; border-radius: 12px; border: 1px solid var(--borda);
+      background: #fff; color: var(--oliva); font-size: 17px; text-align: center;
+    }
+    .nota { color: var(--detalhe); font-size: 12px; margin: 10px 0 0; }
+    .enviandoComo { color: var(--texto); font-size: 14px; margin-top: 24px; }
+    .enviandoComo a { color: var(--dourado); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -66,7 +74,20 @@
     <h1 id="nome"></h1>
     <p class="sub" id="convite">Compartilhe as fotos que você tirou e ajude a eternizar este momento.</p>
 
-    <label for="arquivos" class="botao" id="escolher">📷&nbsp; Escolher fotos</label>
+    <!-- Identificação simples: só o nome, sem senha nem confirmação -->
+    <div id="passoNome" class="cartao escondido">
+      <label for="nomeConvidado" class="rotulo">Como você se chama?</label>
+      <input id="nomeConvidado" class="campo" type="text" maxlength="40"
+             placeholder="Ex.: Matheus" autocomplete="given-name" enterkeyhint="done" />
+      <p class="nota">Assim os anfitriões sabem quem tirou cada foto.</p>
+      <button class="botao" id="continuarNome" disabled>Continuar</button>
+    </div>
+
+    <p id="enviandoComo" class="enviandoComo escondido">
+      Enviando como <strong id="nomeAtual"></strong> · <a href="#" id="trocarNome">trocar</a>
+    </p>
+
+    <label for="arquivos" class="botao escondido" id="escolher">📷&nbsp; Escolher fotos</label>
     <input type="file" id="arquivos" accept="image/*" multiple />
 
     <div id="progresso" class="cartao escondido">
@@ -101,6 +122,42 @@
   const mostrar = (id) => $(id).classList.remove('escondido');
   const esconder = (id) => $(id).classList.add('escondido');
   const token = new URLSearchParams(location.search).get('a') || '';
+  const CHAVE_NOME = 'lume-album-nome';
+  let nomeConvidado = localStorage.getItem(CHAVE_NOME) || '';
+
+  // "Matheus Souza" -> "matheus-souza" (sem acentos, seguro para nome de pasta)
+  function pastaDoNome(nome) {
+    const s = nome.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+    return s || 'convidado';
+  }
+
+  function mostrarPassoNome() {
+    esconder('escolher'); esconder('enviandoComo'); esconder('sucesso');
+    $('nomeConvidado').value = nomeConvidado;
+    $('continuarNome').disabled = nomeConvidado.trim().length < 2;
+    mostrar('passoNome');
+  }
+
+  function mostrarEnvio() {
+    esconder('passoNome');
+    $('nomeAtual').textContent = nomeConvidado;
+    mostrar('enviandoComo'); mostrar('escolher');
+  }
+
+  $('nomeConvidado').addEventListener('input', (e) => {
+    $('continuarNome').disabled = e.target.value.trim().length < 2;
+  });
+  function salvarNome() {
+    const nome = $('nomeConvidado').value.trim().replace(/\s+/g, ' ');
+    if (nome.length < 2) return;
+    nomeConvidado = nome;
+    localStorage.setItem(CHAVE_NOME, nome);
+    mostrarEnvio();
+  }
+  $('continuarNome').addEventListener('click', salvarNome);
+  $('nomeConvidado').addEventListener('keydown', (e) => { if (e.key === 'Enter') salvarNome(); });
+  $('trocarNome').addEventListener('click', (e) => { e.preventDefault(); mostrarPassoNome(); });
 
   // Reduz a foto (máx. 1800 px, JPEG) para enviar rápido e economizar espaço
   async function comprimir(arquivo) {
@@ -135,6 +192,7 @@
         : `Compartilhe as fotos que você tirou nos 15 anos de ${evento.nome} e ajude a eternizar esta noite.`;
     document.title = `${evento.nome} · Álbum LUME`;
     mostrar('album');
+    if (nomeConvidado) mostrarEnvio(); else mostrarPassoNome();
   }
 
   function indisponivel() {
@@ -153,7 +211,7 @@
     for (const arquivo of arquivos) {
       $('progressoTexto').textContent = `Enviando ${enviadas + falhas + 1} de ${arquivos.length}…`;
       const foto = await comprimir(arquivo);
-      const nome = `${token}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.jpg`;
+      const nome = `${token}/${pastaDoNome(nomeConvidado)}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.jpg`;
       const { error } = await sb.storage.from('album').upload(nome, foto, {
         contentType: 'image/jpeg', upsert: false,
       });
@@ -165,7 +223,7 @@
     $('barra').style.width = '0';
     if (enviadas) {
       $('sucessoTexto').textContent =
-        `Obrigado! ${enviadas} ${enviadas === 1 ? 'foto enviada' : 'fotos enviadas'} 💛`;
+        `Obrigado, ${nomeConvidado.split(' ')[0]}! ${enviadas} ${enviadas === 1 ? 'foto enviada' : 'fotos enviadas'} 💛`;
       mostrar('sucesso');
     }
     if (falhas) {
