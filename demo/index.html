@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUME: conheça o app</title>
+<meta name="description" content="Planeje seu casamento ou sua festa de 15 anos em um só lugar. Veja como o LUME funciona.">
+<meta property="og:title" content="LUME: conheça o app">
+<meta property="og:description" content="Casamento e 15 anos em um só lugar: checklist, orçamento, convidados, fornecedores e álbum por QR.">
+<meta property="og:image" content="https://raizer1199.github.io/lume-album/demo/img/casamento.jpg">
+<meta property="og:type" content="website">
+<meta name="robots" content="noindex">
+<link rel="icon" href="img/icone.png">
+<style>
+  :root{--oliva:#34443D;--fundo:#F5F0E8;--texto:#857B6E;--detalhe:#A89C8C;--dourado:#B08D57;--sup:#FBF8F3;--borda:#E4DACB;--sombra:#2A2119}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--fundo);color:var(--oliva);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .serif{font-family:Georgia,"Times New Roman",serif;font-weight:400}
+  .eyebrow{font-size:11px;letter-spacing:2.5px;color:var(--dourado);font-weight:700;text-transform:uppercase}
+
+  /* Capa */
+  .capa{position:relative;min-height:88vh;display:flex;align-items:flex-end;color:#fff;background:url(img/casamento.jpg) center/cover}
+  .capa::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(42,33,25,.15) 0%,rgba(42,33,25,.75) 100%)}
+  .capa-in{position:relative;padding:32px 24px 48px;max-width:640px;margin:0 auto;width:100%}
+  .arco{width:64px;height:40px;border:2px solid var(--dourado);border-bottom:none;border-radius:64px 64px 0 0;margin-bottom:14px}
+  .capa h1{font-size:54px;letter-spacing:10px;line-height:1}
+  .capa p{font-size:18px;margin-top:14px;max-width:420px;opacity:.95}
+  .capa .eyebrow{color:#E9D3AC;margin-top:22px;display:block}
+  .seta{margin-top:26px;font-size:13px;opacity:.8}
+
+  main{max-width:980px;margin:0 auto;padding:0 20px 40px}
+  .intro{text-align:center;padding:48px 8px 10px;max-width:560px;margin:0 auto}
+  .intro h2{font-size:30px;margin:8px 0 10px}
+  .intro p{color:var(--texto)}
+
+  /* Blocos de recurso */
+  .recurso{display:grid;grid-template-columns:1fr;gap:26px;align-items:center;padding:44px 0;border-bottom:1px solid var(--borda)}
+  .recurso:last-of-type{border-bottom:none}
+  .texto h3{font-size:27px;margin:6px 0 10px;line-height:1.2}
+  .texto p{color:var(--texto);font-size:16px}
+  .texto ul{list-style:none;margin-top:14px;display:grid;gap:8px}
+  .texto li{padding-left:22px;position:relative;font-size:15px}
+  .texto li::before{content:"";position:absolute;left:2px;top:8px;width:8px;height:8px;border-radius:50%;background:var(--dourado)}
+  .novo{display:inline-block;background:var(--oliva);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:10px;vertical-align:middle;margin-left:6px}
+  @media(min-width:820px){
+    .recurso{grid-template-columns:1fr 1fr;gap:60px}
+    .recurso:nth-of-type(even) .tel{order:-1}
+  }
+
+  /* Celular */
+  .tel{width:290px;height:600px;margin:0 auto;background:var(--fundo);border-radius:42px;border:10px solid #1d1a17;box-shadow:0 24px 50px rgba(42,33,25,.25);overflow:hidden;position:relative;display:flex;flex-direction:column}
+  .tel .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:86px;height:24px;background:#1d1a17;border-radius:14px;z-index:3}
+  .tela{flex:1;overflow:hidden;padding:46px 16px 10px;font-size:12px}
+  .abas{display:flex;justify-content:space-around;border-top:1px solid var(--borda);background:var(--sup);padding:8px 0 14px}
+  .abas span{font-size:8.5px;font-weight:600;color:var(--detalhe);text-align:center}
+  .abas span i{display:block;width:16px;height:16px;margin:0 auto 3px;border-radius:5px;border:1.6px solid currentColor}
+  .abas span.on{color:var(--oliva)}
+  .abas span.on i{background:var(--oliva)}
+  .t-eyebrow{font-size:8.5px;letter-spacing:2px;color:var(--dourado);font-weight:700}
+  .t-titulo{font-family:Georgia,serif;font-size:22px;line-height:1.15;margin:3px 0 4px}
+  .t-sub{color:var(--texto);font-size:11px}
+  .card{background:var(--sup);border:1px solid var(--borda);border-radius:14px;padding:11px}
+  .pill{display:inline-block;background:var(--oliva);color:#fff;border-radius:14px;padding:4px 11px;font-size:10.5px;font-weight:600}
+  .chip{display:inline-block;border:1px solid var(--borda);background:var(--sup);border-radius:12px;padding:3px 9px;font-size:9.5px;font-weight:600}
+  .chip.on{background:var(--oliva);color:#fff;border-color:var(--oliva)}
+  .linha{display:flex;align-items:center;gap:9px}
+  .foto{border-radius:12px;background-size:cover;background-position:center;position:relative;overflow:hidden;color:#fff}
+  .foto::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(42,33,25,.7))}
+  .foto b{position:absolute;left:10px;bottom:8px;z-index:1;font-family:Georgia,serif;font-weight:400;font-size:14px}
+  .selo{display:inline-block;font-size:7.5px;font-weight:800;letter-spacing:.8px;padding:2px 6px;border-radius:6px}
+  .barra{height:5px;border-radius:3px;background:var(--borda);overflow:hidden}
+  .barra div{height:100%;background:var(--dourado)}
+  .circ{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--dourado);flex:none}
+  .circ.ok{background:var(--oliva);border-color:var(--oliva)}
+  .atalho{display:inline-block;margin-top:5px;border:1px solid var(--dourado);border-radius:10px;padding:2px 8px;font-size:9px;font-weight:600}
+  .tarefa{padding:9px 0;border-bottom:1px solid var(--borda)}
+  .seg{display:flex;gap:4px;background:var(--sup);border:1px solid var(--borda);border-radius:12px;padding:3px;margin:10px 0}
+  .seg span{flex:1;text-align:center;font-size:9px;font-weight:600;padding:5px 0;border-radius:9px;color:var(--texto)}
+  .seg span.on{background:var(--oliva);color:#fff}
+  .estrelas{color:var(--dourado);letter-spacing:1px;font-size:10px}
+  .qr{width:120px;height:120px;margin:10px auto;background:
+    conic-gradient(var(--oliva) 0 25%,#fff 0 50%,var(--oliva) 0 75%,#fff 0) 0 0/12px 12px;border:8px solid #fff;outline:1px solid var(--borda);border-radius:6px}
+
+  /* Em breve */
+  .breve{background:var(--oliva);color:#fff;border-radius:24px;padding:34px 24px;margin:30px 0}
+  .breve h3{font-size:26px;margin:6px 0 16px}
+  .breve .eyebrow{color:#E9D3AC}
+  .grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .grade div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:14px}
+  .grade b{display:block;font-size:15px;margin-bottom:3px}
+  .grade span{font-size:13px;opacity:.8}
+  footer{text-align:center;color:var(--detalhe);font-size:12px;padding:20px 20px 40px}
+  footer .serif{font-size:22px;letter-spacing:6px;color:var(--oliva);display:block;margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<header class="capa">
+  <div class="capa-in">
+    <div class="arco"></div>
+    <h1 class="serif">LUME</h1>
+    <p>Planeje seu casamento ou sua festa de 15 anos em um só lugar, sem planilhas e sem estresse.</p>
+    <span class="eyebrow">Londrina e região · Em desenvolvimento</span>
+    <div class="seta">Role para conhecer o app ↓</div>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <span class="eyebrow">Demonstração</span>
+    <h2 class="serif">Um tour pelas telas do app</h2>
+    <p>As telas abaixo usam dados de exemplo (um casal fictício) para mostrar como cada parte funciona.</p>
+  </section>
+
+  <!-- 1. Boas-vindas -->
+  <section class="recurso">
+    <div class="texto">
+      <span class="eyebrow">Primeiros passos</span>
+      <h3 class="serif">Duas experiências, um só app</h3>
+      <p>Logo na entrada você escolhe o que vai celebrar. O app se adapta: tarefas, orçamento e roteiro são diferentes para casamento e para 15 anos.</p>
+      <ul>
+        <li>Perguntas simples, uma por tela</li>
+        <li>A data do evento pode ser definida depois</li>
+        <li>Na festa de 15 anos, a família planeja junto com a debutante</li>
+      </ul>
+    </div>
+    <div class="tel"><div class="notch"></div>
+      <div class="tela">
+        <div style="text-align:center;margin:8px 0 14px">
+          <div class="arco" style="margin:0 auto 6px;width:40px;height:24px"></div>
+          <div class="t-titulo" style="letter-spacing:5px">LUME</div>
+          <div class="t-sub">O que vamos celebrar?</div>
+        </div>
+        <div class="foto" style="height:190px;background-image:url(img/casamento.jpg);margin-bottom:12px"><b>LUME Wedding<br><small style="font-family:sans-serif;font-size:10px">Casamento</small></b></div>
+        <div class="foto" style="height:190px;background-image:url(img/quinze-anos.jpg)"><b>LUME 15<br><small style="font-family:sans-serif;font-size:10px">Festa de 15 anos</small></b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Início -->
+  <section class="recurso">
+    <div class="texto">
+      <span class="eyebrow">Início</span>
+      <h3 class="serif">Tudo o que importa hoje, numa tela só</h3>
+      <p>Uma foto do casal (ou da debutante) com a contagem regressiva. Logo abaixo, o app mostra o que fazer agora, sem precisar procurar.</p>
+      <ul>
+        <li>Contagem regressiva para o grande dia</li>
+        <li>Sugestões de "para fazer agora"</li>
+        <li>Lembretes no celular: parcelas, tarefas da semana e 100/30/7/1 dias antes</li>
+      </ul>
+    </div>
+    <div class="tel"><div class="notch"></div>
+      <div class="tela">
+        <div style="text-align:center">
+          <div style="width:84px;height:84px;margin:0 auto;border-radius:50%;background:url(img/casamento.jpg) center/cover;outline:2px solid var(--dourado);outline-offset:4px"></div>
+          <div class="t-titulo" style="margin-top:12px">Ana &amp; Pedro</div>
+          <span class="pill">Faltam 214 dias</span>
+        </div>
+        <div class="t-eyebrow" style="margin:16px 0 7px">PARA FAZER AGORA</div>
+        <div class="card" style="display:grid;gap:8px">
+          <div class="linha"><div class="circ"></div><span>Contratar buffet (com degustação)</span></div>
+          <div class="linha"><div class="circ"></div><span>Parcela da decoração vence amanhã</span></div>
+          <div class="linha"><div class="circ"></div><span>12 famílias ainda não confirmaram</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div class="foto" style="height:62px;background-image:url(img/fornecedores.jpg)"><b style="font-size:12px">Fornecedores</b></div>
+          <div class="foto" style="height:62px;background-image:url(img/locais.jpg)"><b style="font-size:12px">Locais</b></div>
+          <div class="foto" style="height:62px;background-image:url(img/checklist.jpg)"><b style="font-size:12px">Checklist</b></div>
+          <div class="foto" style="height:62px;background-image:url(img/orcamento.jpg)"><b style="font-size:12px">Orçamento</b></div>
+        </div>
+      </div>
+      <div class="abas"><span class="on"><i></i>Início</span><span><i></i>Locais</span><span><i></i>Fornecedores</span><span><i></i>Planejamento</span><span><i></i>Álbum</span></div>
+    </div>
+  </section>
+
+  <!-- 3. Fornecedores -->
+  <section class="recurso">
+    <div class="texto">
+      <span class="eyebrow">Marketplace</span>
+      <h3 class="serif">Fornecedores de Londrina e região</h3>
+      <p>Buffets, fotógrafos, decoração, música e outros, com faixa de preço e avaliações. O orçamento é pedido em um toque, direto no WhatsApp do fornecedor.</p>
+      <ul>
+        <li>Avaliações só de quem realmente contratou</li>
+        <li>Parceiros LUME com oferta exclusiva para quem usa o app</li>
+        <li>Favoritar e comparar fornecedores lado a lado</li>
+        <li>Anúncio pago sempre aparece marcado como patrocinado</li>
+      </ul>
+    </div>
+    <div class="tel"><div class="notch"></div>
+      <div class="tela">
+        <div class="t-eyebrow">FORNECEDORES</div>
+        <div class="t-titulo">Buffet</div>
+        <div style="display:flex;gap:5px;margin:8px 0 10px"><span class="chip on">Todos</span><span class="chip">Favoritos</span><span class="chip">Até R$ 150/pessoa</span></div>
+        <div class="card" style="padding:0;overflow:hidden;margin-bottom:10px">
+          <div style="height:92px;background:url(img/fornecedores.jpg) center/cover"></div>
+          <div style="padding:9px 10px">
+            <span class="selo" style="background:var(--dourado);color:#fff">PARCEIRO LUME</span>
+            <div style="font-weight:700;font-size:13px;margin-top:4px">Buffet Jardim das Flores</div>
+            <div class="estrelas">★★★★★ <span style="color:var(--texto)">4,9 · 32 avaliações</span></div>
+            <div class="t-sub">R$ 120 a R$ 180 por pessoa</div>
+            <div style="margin-top:6px;background:#F1E7D6;border-radius:8px;padding:5px 7px;font-size:9.5px">🎁 10% de desconto para quem vem pelo LUME</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="height:70px;background:url(img/locais.jpg) center/cover"></div>
+          <div style="padding:9px 10px">
+            <div style="font-weight:700;font-size:13px">Sabor &amp; Festa Eventos</div>
+            <div class="estrelas">★★★★☆ <span style="color:var(--texto)">4,6 · 18 avaliações</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="abas"><span><i></i>Início</span><span><i></i>Locais</span><span class="on"><i></i>Fornecedores</span><span><i></i>Planejamento</span><span><i></i>Álbum</span></div>
+    </div>
+  </section>
+
+  <!-- 4. Checklist -->
+  <section class="recurso">
+    <div class="texto">
+      <span class="eyebrow">Planejamento · Checklist</span>
+      <h3 class="serif">Um checklist que já vem pronto <span class="novo">NOVO</span></h3>
+      <p>Cerca de 30 tarefas na ordem certa, com prazo calculado a partir da data do evento. Cada tarefa leva direto ao lugar do app onde ela se resolve.</p>
+      <ul>
+        <li>"Contratar buffet" abre a lista de buffets</li>
+        <li>Algumas tarefas se marcam sozinhas quando o gasto entra no orçamento</li>
+        <li>Tarefas atrasadas ficam destacadas</li>
+      </ul>
+    </div>
+    <div class="tel"><div class="notch"></div>
+      <div class="tela">
+        <div class="t-eyebrow">PLANEJAMENTO</div>
+        <div class="t-titulo">Ana &amp; Pedro</div>
+        <div class="seg"><span class="on">Checklist</span><span>Orçamento</span><span>Convidados</span><span>Roteiro</span></div>
+        <div><b style="font-size:17px">9</b> <span class="t-sub">de 34 feitas</span></div>
+        <div class="barra" style="margin:6px 0 10px"><div style="width:26%"></div></div>
+        <div style="display:flex;gap:5px"><span class="chip on">A fazer (25)</span><span class="chip">Feitas (9)</span></div>
+        <div class="tarefa linha" style="align-items:flex-start"><div class="circ"></div><div>Contratar buffet (com degustação)<div class="t-sub" style="color:#A0522D;font-weight:700">Atrasada</div><span class="atalho">Ver buffets ›</span></div></div>
+        <div class="tarefa linha" style="align-items:flex-start"><div class="circ"></div><div>Contratar fotógrafo<div class="t-sub">Até jan 2027</div><span class="atalho">Ver profissionais ›</span></div></div>
+        <div class="tarefa linha" style="align-items:flex-start"><div class="circ"></div><div>Contratar banda ou DJ<div class="t-sub">Até jan 2027</div><span class="atalho">Ver opções de música ›</span></div></div>
+        <div class="tarefa linha" style="align-items:flex-start"><div class="circ"></div><div>Escolher os padrinhos<div class="t-sub">Até mar 2027</div></div></div>
+      </div>
+      <div class="abas"><span><i></i>Início</span><span><i></i>Locais</span><span><i></i>Fornecedores</span><span class="on"><i></i>Planejamento</span><span><i></i>Álbum</span></div>
+    </div>
+  </section>
+
+  <!-- 5. Orçamento -->
+  <section class="recurso">
+    <div class="texto">
+      <span class="eyebrow">Planejamento · Orçamento</span>
+      <h3 class="serif">O dinheiro sob controle</h3>
+      <p>Defina a verba e veja quanto já está comprometido em cada categoria. Os pagamentos parcelados viram lembretes no celular.</p>
+      <ul>
+        <li>Verba total, quanto já gastou e quanto ainda tem</li>
+        <li>Parcelas com vencimento e aviso na véspera</li>
+        <li>Meta de quanto guardar por mês até o casamento</li>
+        <li>A família pode ajudar a planejar sem ver os valores</li>
+      </ul>
+    </div>
+    <div class="tel"><div class="notch"></div>
+      <div class="tela">
+        <div class="t-eyebrow">PLANEJAMENTO</div>
+        <div class="t-titulo">Ana &amp; Pedro</div>
+        <div class="seg"><span>Checklist</span><span class="on">Orçamento</span><span>Convidados</span><span>Roteiro</span></div>
+        <div class="card">
+          <div class="t-sub">Verba total</div>
+          <div class="t-titulo" style="font-size:24px">R$ 85.000</div>
+          <div class="barra" style="margin:6px 0"><div style="width:58%"></div></div>
+          <div class="t-sub">R$ 49.300 comprometidos · R$ 35.700 livres</div>
+        </div>
+        <div class="t-eyebrow" style="margin:12px 0 6px">POR CATEGORIA</div>
+        <div class="card" style="display:grid;gap:7px">
+          <div class="linha" style="justify-content:space-between"><span>Local</span><b>R$ 18.000</b></div>
+          <div class="linha" style="justify-content:space-between"><span>Buffet</span><b>R$ 21.600</b></div>
+          <div class="linha" style="justify-content:space-between"><span>Decoração</span><b>R$ 9.700</b></div>
+          <div class="linha" style="justify-content:space-between;color:var(--texto)"><span>Foto e vídeo</span><span>estimado R$ 8.000</span></div>
+        </div>
+        <div class="t-eyebrow" style="margin:12px 0 6px">PRÓXIMOS PAGAMENTOS</div>
+        <div class="card linha" style="justify-content:space-between"><span>Decoração · 2/5<br><small style="color:#A0522D">vence amanhã</small></span><b>R$ 1.940</b></div>
+      </div>
+      <div class="abas"><span><i></i>Início</span><span><i></i>Locais</span><span><i></i>Fornecedores</span><span class="on"><i></i>Planejamento</span><span><i></i>Álbum</span></div>
+    </div>
+  </section>
+
+  <!-- 6. Convidados -->
+  <section class="recurso">
+    <div class="texto">
+      <span class="eyebrow">Planejamento · Convidados</span>
+      <h3 class="serif">Convite digital com confirmação</h3>
+      <p>Cadastre os convidados por família e mande o convite pelo WhatsApp. A família abre o link, confirma quem vai e a lista se atualiza sozinha no app.</p>
+      <ul>
+        <li>Convite com data, horário, local e mapa</li>
+        <li>Confirmação por família, sem baixar nada</li>
+        <li>Contagem de confirmados e pendentes</li>
+      </ul>
+    </div>
+    <div class="tel"><div class="notch"></div>
+      <div class="tela" style="padding:0;background:var(--sup)">
+        <div style="height:220px;background:url(img/convidados.jpg) center/cover;position:relative">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(42,33,25,.65))"></div>
+          <div style="position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#fff">
+            <div style="font-size:8.5px;letter-spacing:2px;color:#E9D3AC;font-weight:700">VOCÊ ESTÁ CONVIDADO</div>
+            <div class="t-titulo" style="font-size:24px">Ana &amp; Pedro</div>
+          </div>
+        </div>
+        <div style="padding:14px 16px;text-align:center">
+          <div class="t-sub">Sábado, 26 de junho de 2027 · 19h30</div>
+          <div style="font-weight:600;margin:4px 0 12px">Espaço Jardim · Londrina</div>
+          <div class="card" style="text-align:left">
+            <div class="t-eyebrow" style="margin-bottom:6px">FAMÍLIA SOUZA · QUEM VAI?</div>
+            <div class="linha" style="margin-bottom:6px"><div class="circ ok"></div>Carlos</div>
+            <div class="linha" style="margin-bottom:6px"><div class="circ ok"></div>Marina</div>
+            <div class="linha"><div class="circ"></div>Lucas</div>
+          </div>
+          <div class="pill" style="display:block;margin-top:12px;padding:9px">Confirmar presença</div>
+          <div class="t-sub" style="margin-top:8px">Ver no mapa</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Roteiro -->
+  <section class="recurso">
+    <div class="texto">
+      <span class="eyebrow">Planejamento · Roteiro</span>
+      <h3 class="serif">O roteiro do grande dia</h3>
+      <p>Horário a horário: o que acontece, quem cuida e observações (como a música da entrada). Já vem um modelo pronto para casamento e outro para 15 anos, com valsa, 15 velas e troca do sapato.</p>
+      <ul>
+        <li>Modelo pronto para começar</li>
+        <li>Quem cuida de cada momento fica anotado</li>
+      </ul>
+    </div>
+    <div class="tel"><div class="notch"></div>
+      <div class="tela">
+        <div class="t-eyebrow">PLANEJAMENTO</div>
+        <div class="t-titulo">Júlia 15 anos</div>
+        <div class="seg"><span>Checklist</span><span>Orçamento</span><span>Convidados</span><span class="on">Roteiro</span></div>
+        <div style="display:grid;gap:0">
+          <div class="tarefa linha" style="align-items:flex-start"><b style="color:var(--dourado);width:38px">20:00</b><div>Recepção dos convidados<div class="t-sub">Cerimonial</div></div></div>
+          <div class="tarefa linha" style="align-items:flex-start"><b style="color:var(--dourado);width:38px">21:00</b><div>Entrada da debutante<div class="t-sub">Música: A Thousand Years</div></div></div>
+          <div class="tarefa linha" style="align-items:flex-start"><b style="color:var(--dourado);width:38px">21:15</b><div>Valsa com o pai<div class="t-sub">Coreógrafo</div></div></div>
+          <div class="tarefa linha" style="align-items:flex-start"><b style="color:var(--dourado);width:38px">21:40</b><div>Cerimônia das 15 velas</div></div>
+          <div class="tarefa linha" style="align-items:flex-start"><b style="color:var(--dourado);width:38px">22:00</b><div>Troca do sapato</div></div>
+          <div class="tarefa linha" style="align-items:flex-start"><b style="color:var(--dourado);width:38px">22:15</b><div>Abertura da pista<div class="t-sub">DJ</div></div></div>
+        </div>
+      </div>
+      <div class="abas"><span><i></i>Início</span><span><i></i>Locais</span><span><i></i>Fornecedores</span><span class="on"><i></i>Planejamento</span><span><i></i>Álbum</span></div>
+    </div>
+  </section>
+
+  <!-- 8. Álbum -->
+  <section class="recurso">
+    <div class="texto">
+      <span class="eyebrow">Álbum compartilhado</span>
+      <h3 class="serif">As fotos dos convidados, num só lugar</h3>
+      <p>Coloque o QR code nas mesas. O convidado aponta a câmera, digita o nome e envia as fotos pelo navegador, sem baixar aplicativo. No app, as fotos aparecem separadas por convidado.</p>
+      <ul>
+        <li>QR code pronto para imprimir ou mostrar no telão</li>
+        <li>Fotos organizadas por quem enviou</li>
+        <li>Dá para pausar o envio quando quiser</li>
+      </ul>
+    </div>
+    <div class="tel"><div class="notch"></div>
+      <div class="tela">
+        <div class="t-eyebrow">ÁLBUM</div>
+        <div class="t-titulo">Fotos da festa</div>
+        <div class="card" style="text-align:center;margin-top:8px">
+          <div class="t-sub">Aponte a câmera para enviar fotos</div>
+          <div class="qr"></div>
+          <div style="display:flex;gap:6px;justify-content:center"><span class="chip on">Compartilhar</span><span class="chip">Pausar envios</span></div>
+        </div>
+        <div style="display:flex;gap:5px;margin:12px 0 8px;flex-wrap:wrap"><span class="chip on">Todos (48)</span><span class="chip">Tia Rosa (12)</span><span class="chip">Bruno (9)</span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">
+          <div class="foto" style="aspect-ratio:1;background-image:url(img/album.jpg)"></div>
+          <div class="foto" style="aspect-ratio:1;background-image:url(img/casamento.jpg)"></div>
+          <div class="foto" style="aspect-ratio:1;background-image:url(img/convidados.jpg)"></div>
+          <div class="foto" style="aspect-ratio:1;background-image:url(img/locais.jpg)"></div>
+          <div class="foto" style="aspect-ratio:1;background-image:url(img/quinze-anos.jpg)"></div>
+          <div class="foto" style="aspect-ratio:1;background-image:url(img/checklist.jpg)"></div>
+        </div>
+      </div>
+      <div class="abas"><span><i></i>Início</span><span><i></i>Locais</span><span><i></i>Fornecedores</span><span><i></i>Planejamento</span><span class="on"><i></i>Álbum</span></div>
+    </div>
+  </section>
+
+  <!-- 9. Planejar juntos -->
+  <section class="recurso">
+    <div class="texto">
+      <span class="eyebrow">Perfil</span>
+      <h3 class="serif">Planejar junto com quem você ama</h3>
+      <p>Convide o seu par, a mãe ou a madrinha com um código de 6 letras. Todos veem e atualizam o mesmo evento, e você escolhe quem pode ver o orçamento.</p>
+      <ul>
+        <li>Vários eventos na mesma conta</li>
+        <li>Lembretes podem ser ligados e desligados</li>
+        <li>Excluir a conta e os dados a qualquer momento (LGPD)</li>
+      </ul>
+    </div>
+    <div class="tel"><div class="notch"></div>
+      <div class="tela">
+        <div class="t-eyebrow">PERFIL</div>
+        <div class="t-titulo">Quem planeja</div>
+        <div class="card" style="display:grid;gap:9px;margin-top:8px">
+          <div class="linha"><div style="width:28px;height:28px;border-radius:50%;background:var(--dourado);color:#fff;display:grid;place-items:center;font-weight:700">A</div><div>Ana<div class="t-sub">Organizadora</div></div></div>
+          <div class="linha"><div style="width:28px;height:28px;border-radius:50%;background:var(--oliva);color:#fff;display:grid;place-items:center;font-weight:700">P</div><div>Pedro<div class="t-sub">Planeja junto</div></div></div>
+          <div class="linha"><div style="width:28px;height:28px;border-radius:50%;background:var(--detalhe);color:#fff;display:grid;place-items:center;font-weight:700">M</div><div>Márcia (mãe)<div class="t-sub">Não vê o orçamento</div></div></div>
+        </div>
+        <div class="card" style="text-align:center;margin-top:12px">
+          <div class="t-sub">Código para convidar</div>
+          <div style="font-size:24px;letter-spacing:6px;font-weight:700;margin:6px 0">K7M2QX</div>
+          <span class="pill">Enviar pelo WhatsApp</span>
+        </div>
+        <div class="card linha" style="justify-content:space-between;margin-top:12px"><span>Lembretes no celular</span><span style="width:34px;height:20px;border-radius:10px;background:var(--oliva);position:relative"><span style="position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff"></span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="breve">
+    <span class="eyebrow">O que vem por aí</span>
+    <h3 class="serif">Próximas novidades</h3>
+    <div class="grade">
+      <div><b>Lista de presentes via Pix</b><span>Cotas de lua de mel direto no convite digital.</span></div>
+      <div><b>Modo Dia do Evento</b><span>Roteiro ao vivo e contato dos fornecedores a um toque.</span></div>
+      <div><b>Página do evento</b><span>O "site" do casamento ou dos 15 anos, montado sozinho.</span></div>
+      <div><b>Mapa de mesas</b><span>Organizar quem senta onde a partir dos confirmados.</span></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="serif">LUME</span>
+  Demonstração com dados fictícios · App em desenvolvimento · 2026
+</footer>
+</body>
+</html>
